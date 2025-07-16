@@ -246,6 +246,33 @@ def test_run_mapping_rules_applies(mock_session, mock_alert_dto):
     assert mock_alert_dto.service == "new_service"
 
 
+def test_run_mapping_rules_with_hyphen(mock_session, mock_alert_dto):
+    # Setup a mapping rule
+    rule = MappingRule(
+        id=1,
+        tenant_id="test_tenant",
+        priority=1,
+        matchers=[["name"]],
+        rows=[
+            {"name": "TestAlert", "service": "serviceA"},
+            {"name": "TestAlert-bis", "service": "serviceB"},
+        ],
+        disabled=False,
+        type="csv",
+    )
+    mock_session.query.return_value.filter.return_value.filter.return_value.order_by.return_value.all.return_value = [
+        rule
+    ]
+
+    mock_alert_dto.name = "TestAlert-bis"
+    enrichment_bl = EnrichmentsBl(tenant_id="test_tenant", db=mock_session)
+
+    enrichment_bl.run_mapping_rules(mock_alert_dto)
+
+    # Check if the alert's service is now updated to "serviceB"
+    assert mock_alert_dto.service == "serviceB"
+
+
 def test_run_mapping_rules_with_regex_match(mock_session, mock_alert_dto):
     rule = MappingRule(
         id=1,
