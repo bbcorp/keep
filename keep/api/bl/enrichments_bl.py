@@ -525,7 +525,7 @@ class EnrichmentsBl:
     def _is_match(value, pattern):
         if value is None or pattern is None:
             return False
-        return re.search(pattern, value) is not None
+        return re.search(value, pattern) is not None
 
     def _check_explicit_match(
         self, row: dict, matcher: str, explicit_value: str
