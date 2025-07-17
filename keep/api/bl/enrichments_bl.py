@@ -525,7 +525,7 @@ class EnrichmentsBl:
     def _is_match(value, pattern):
         if value is None or pattern is None:
             return False
-        return re.search(value, pattern) is not None
+        return re.search(pattern, value) is not None
 
     def _check_explicit_match(
         self, row: dict, matcher: str, explicit_value: str
@@ -563,8 +563,8 @@ class EnrichmentsBl:
         try:
             return all(
                 self._is_match(
-                    get_nested_attribute(alert, attribute.strip()),
                     row.get(attribute.strip()),
+                    get_nested_attribute(alert, attribute.strip()),
                 )
                 or get_nested_attribute(alert, attribute.strip())
                 == row.get(attribute.strip())
